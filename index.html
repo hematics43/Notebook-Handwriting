@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Notebook Page</title>
+  <link href="https://fonts.googleapis.com/css2?family=Homemade+Apple&family=Caveat&family=Pacifico&family=Shadows+Into+Light&family=Patrick+Hand&family=Architects+Daughter&family=Indie+Flower&family=Satisfy&family=Dancing+Script&family=Yellowtail&family=Gloria+Hallelujah&family=Coming+Soon&family=Just+Me+Again+Down+Here&family=Rock+Salt&family=Reenie+Beanie&family=Zeyada&family=Give+You+Glory&family=Kalam&family=Handlee&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <style>
+    :root {
+      --line-color: #00aaff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #e0e0e0;
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    .controls label {
+      margin-right: 5px;
+    }
+
+    textarea {
+      width: 100%;
+      max-width: 1000px;
+      height: 120px;
+      font-size: 1rem;
+      padding: 10px;
+      margin-bottom: 20px;
+      resize: vertical;
+    }
+
+    select, button, input[type="color"], input[type="number"] {
+      font-size: 1rem;
+      padding: 6px 8px;
+    }
+
+    .paper {
+      position: relative;
+      width: 100%;
+      max-width: 794px;
+      aspect-ratio: 794/1123;
+      padding: 13% 10% 8% 14%;
+      background-color: #fff;
+      border: 1px solid #bbb;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+      font-size: 1.2vw;
+      line-height: 1.5;
+      color: #222;
+      overflow: hidden;
+    }
+
+    .lines {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 13%;
+      left: 0;
+      background-image: repeating-linear-gradient(
+        to bottom,
+        var(--line-color),
+        var(--line-color) 1px,
+        transparent 1px,
+        transparent 2em
+      );
+      z-index: 0;
+    }
+
+    .left-line {
+      position: absolute;
+      left: 12%;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--line-color);
+      z-index: 1;
+    }
+
+    .top-line {
+      position: absolute;
+      top: 13%;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--line-color);
+      z-index: 1;
+    }
+
+    .content {
+      position: relative;
+      z-index: 2;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      width: 100%;
+      height: 100%;
+    }
+
+    .date-time {
+      position: absolute;
+      top: 1em;
+      right: 2em;
+      font-size: 1rem;
+      font-family: 'Homemade Apple', cursive;
+      color: #444;
+      z-index: 3;
+      text-align: right;
+    }
+
+    .date-time input {
+      background: transparent;
+      border: none;
+      font-family: inherit;
+      font-size: inherit;
+      color: inherit;
+      outline: none;
+      width: 100px;
+      text-align: right;
+    }
+
+    @media (max-width: 600px) {
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .paper {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Notebook Page – Handwriting Simulator</h2>
+
+  <textarea id="userInput" placeholder="Type your note..."></textarea>
+
+  <div class="controls">
+    <label>Font:</label>
+    <select id="fontSelect">
+      <option>Homemade Apple</option>
+      <option>Caveat</option>
+      <option>Pacifico</option>
+      <option>Shadows Into Light</option>
+      <option>Patrick Hand</option>
+      <option>Architects Daughter</option>
+      <option>Indie Flower</option>
+      <option>Satisfy</option>
+      <option>Dancing Script</option>
+      <option>Yellowtail</option>
+      <option>Gloria Hallelujah</option>
+      <option>Coming Soon</option>
+      <option>Just Me Again Down Here</option>
+      <option>Rock Salt</option>
+      <option>Reenie Beanie</option>
+      <option>Zeyada</option>
+      <option>Give You Glory</option>
+      <option>Kalam</option>
+      <option>Handlee</option>
+    </select>
+
+    <label>Size:</label>
+    <input type="number" id="fontSize" value="20" min="12" max="72">
+
+    <label>Line Height:</label>
+    <input type="number" id="lineHeight" value="26" min="16" max="60">
+
+    <label>Text Color:</label>
+    <input type="color" id="fontColorPicker" value="#222222">
+
+    <label>Line Color:</label>
+    <input type="color" id="lineColorPicker" value="#00aaff">
+
+    <button onclick="toggleStyle('bold')"><b>B</b></button>
+    <button onclick="toggleStyle('italic')"><i>I</i></button>
+    <button onclick="toggleStyle('underline')"><u>U</u></button>
+
+    <button onclick="saveAsJPEG()">📸 Save JPEG</button>
+  </div>
+
+  <div id="paperOutput" class="paper">
+    <div class="lines"></div>
+    <div class="left-line"></div>
+    <div class="top-line"></div>
+    <div class="date-time">
+      <div><label>Date: </label><input type="text" id="dateField" placeholder="DD/MM/YYYY"></div>
+      <div><label>Time: </label><input type="text" id="timeField" placeholder="HH:MM"></div>
+    </div>
+    <div id="textContent" class="content"></div>
+  </div>
+
+  <script>
+    const userInput = document.getElementById('userInput');
+    const textContent = document.getElementById('textContent');
+    const fontSelect = document.getElementById('fontSelect');
+    const fontColorPicker = document.getElementById('fontColorPicker');
+    const fontSizeInput = document.getElementById('fontSize');
+    const lineHeightInput = document.getElementById('lineHeight');
+    const lineColorPicker = document.getElementById('lineColorPicker');
+    const paperOutput = document.getElementById('paperOutput');
+
+    let styles = {
+      bold: false,
+      italic: false,
+      underline: false
+    };
+
+    function updatePreview() {
+      textContent.textContent = userInput.value;
+      textContent.style.fontFamily = `'${fontSelect.value}', cursive`;
+      textContent.style.color = fontColorPicker.value;
+      textContent.style.fontWeight = styles.bold ? 'bold' : 'normal';
+      textContent.style.fontStyle = styles.italic ? 'italic' : 'normal';
+      textContent.style.textDecoration = styles.underline ? 'underline' : 'none';
+      textContent.style.fontSize = fontSizeInput.value + 'px';
+      textContent.style.lineHeight = lineHeightInput.value + 'px';
+      document.documentElement.style.setProperty('--line-color', lineColorPicker.value);
+    }
+
+    function toggleStyle(style) {
+      styles[style] = !styles[style];
+      updatePreview();
+    }
+
+    function saveAsJPEG() {
+      html2canvas(paperOutput, {
+        backgroundColor: '#fff',
+        scale: 2
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'notebook-page.jpg';
+        link.href = canvas.toDataURL('image/jpeg', 1.0);
+        link.click();
+      });
+    }
+
+    userInput.addEventListener('input', updatePreview);
+    fontSelect.addEventListener('change', updatePreview);
+    fontColorPicker.addEventListener('input', updatePreview);
+    fontSizeInput.addEventListener('input', updatePreview);
+    lineHeightInput.addEventListener('input', updatePreview);
+    lineColorPicker.addEventListener('input', updatePreview);
+
+    window.onload = updatePreview;
+  </script>
+
+</body>
+</html>
