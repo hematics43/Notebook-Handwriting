@@ -25,31 +25,13 @@
       align-items: center;
     }
 
-    h2 {
-      text-align: center;
-    }
-
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-      margin: 20px 0;
-      width: 100%;
-      max-width: 1000px;
-    }
-
-    .controls label {
-      margin-right: 5px;
-    }
-
     textarea {
       width: 100%;
       max-width: 1000px;
       height: 120px;
       font-size: 1rem;
       padding: 10px;
-      margin-bottom: 20px;
+      margin-top: 20px;
       resize: vertical;
     }
 
@@ -72,6 +54,7 @@
       line-height: 1.5;
       color: #222;
       overflow: hidden;
+      margin-bottom: 30px;
     }
 
     .lines {
@@ -141,6 +124,16 @@
       text-align: right;
     }
 
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      max-width: 1000px;
+      width: 100%;
+      margin-top: 10px;
+    }
+
     @media (max-width: 600px) {
       .controls {
         flex-direction: column;
@@ -154,10 +147,22 @@
 </head>
 <body>
 
-  <h2>Notebook Page – Handwriting Simulator</h2>
+  <!-- Notebook paper comes first -->
+  <div id="paperOutput" class="paper">
+    <div class="lines"></div>
+    <div class="left-line"></div>
+    <div class="top-line"></div>
+    <div class="date-time">
+      <div><label>Date: </label><input type="text" id="dateField" placeholder="DD/MM/YYYY"></div>
+      <div><label>Time: </label><input type="text" id="timeField" placeholder="HH:MM"></div>
+    </div>
+    <div id="textContent" class="content"></div>
+  </div>
 
+  <!-- Textarea input -->
   <textarea id="userInput" placeholder="Type your note..."></textarea>
 
+  <!-- Controls go after the page -->
   <div class="controls">
     <label>Font:</label>
     <select id="fontSelect">
@@ -199,17 +204,6 @@
     <button onclick="toggleStyle('underline')"><u>U</u></button>
 
     <button onclick="saveAsJPEG()">📸 Save JPEG</button>
-  </div>
-
-  <div id="paperOutput" class="paper">
-    <div class="lines"></div>
-    <div class="left-line"></div>
-    <div class="top-line"></div>
-    <div class="date-time">
-      <div><label>Date: </label><input type="text" id="dateField" placeholder="DD/MM/YYYY"></div>
-      <div><label>Time: </label><input type="text" id="timeField" placeholder="HH:MM"></div>
-    </div>
-    <div id="textContent" class="content"></div>
   </div>
 
   <script>
@@ -266,6 +260,5 @@
 
     window.onload = updatePreview;
   </script>
-
 </body>
 </html>
