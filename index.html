@@ -1,43 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Notebook Page</title>
+  <title>Multi-Page Notebook</title>
   <link href="https://fonts.googleapis.com/css2?family=Homemade+Apple&family=Caveat&family=Pacifico&family=Shadows+Into+Light&family=Patrick+Hand&family=Architects+Daughter&family=Indie+Flower&family=Satisfy&family=Dancing+Script&family=Yellowtail&family=Gloria+Hallelujah&family=Coming+Soon&family=Just+Me+Again+Down+Here&family=Rock+Salt&family=Reenie+Beanie&family=Zeyada&family=Give+You+Glory&family=Kalam&family=Handlee&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <style>
     :root {
-      --line-color: #00aaff;
+      --default-line-color: #00aaff;
     }
-
-    * {
-      box-sizing: border-box;
-    }
-
     body {
-      background: #e0e0e0;
       margin: 0;
       padding: 20px;
       font-family: Arial, sans-serif;
+      background: #e0e0e0;
+    }
+
+    .page-container {
       display: flex;
       flex-direction: column;
       align-items: center;
-    }
-
-    textarea {
-      width: 100%;
-      max-width: 1000px;
-      height: 120px;
-      font-size: 1rem;
-      padding: 10px;
-      margin-top: 20px;
-      resize: vertical;
-    }
-
-    select, button, input[type="color"], input[type="number"] {
-      font-size: 1rem;
-      padding: 6px 8px;
     }
 
     .paper {
@@ -49,53 +32,48 @@
       background-color: #fff;
       border: 1px solid #bbb;
       border-radius: 8px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
-      font-size: 1.2vw;
-      line-height: 1.5;
-      color: #222;
-      overflow: hidden;
-      margin-bottom: 30px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      margin-bottom: 40px;
     }
 
-    .lines {
+    .lines, .left-line, .top-line {
       position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 13%;
-      left: 0;
-      background-image: repeating-linear-gradient(
-        to bottom,
-        var(--line-color),
-        var(--line-color) 1px,
-        transparent 1px,
-        transparent 2em
-      );
       z-index: 0;
     }
 
+    .lines {
+      top: 13%;
+      left: 0;
+      width: 100%;
+      height: 87%;
+      background-image: repeating-linear-gradient(
+        to bottom,
+        var(--line-color, var(--default-line-color)),
+        var(--line-color, var(--default-line-color)) 1px,
+        transparent 1px,
+        transparent 2em
+      );
+    }
+
     .left-line {
-      position: absolute;
       left: 12%;
       top: 0;
       bottom: 0;
       width: 2px;
-      background: var(--line-color);
-      z-index: 1;
+      background: var(--line-color, var(--default-line-color));
     }
 
     .top-line {
-      position: absolute;
       top: 13%;
       left: 0;
       right: 0;
       height: 2px;
-      background: var(--line-color);
-      z-index: 1;
+      background: var(--line-color, var(--default-line-color));
     }
 
     .content {
       position: relative;
-      z-index: 2;
+      z-index: 1;
       white-space: pre-wrap;
       word-wrap: break-word;
       width: 100%;
@@ -129,9 +107,18 @@
       flex-wrap: wrap;
       justify-content: center;
       gap: 10px;
-      max-width: 1000px;
-      width: 100%;
-      margin-top: 10px;
+      margin-bottom: 30px;
+    }
+
+    textarea, select, input[type="color"], input[type="number"] {
+      font-size: 1rem;
+      padding: 6px 8px;
+    }
+
+    button {
+      font-size: 1rem;
+      padding: 6px 12px;
+      cursor: pointer;
     }
 
     @media (max-width: 600px) {
@@ -139,126 +126,134 @@
         flex-direction: column;
         align-items: stretch;
       }
-      .paper {
-        font-size: 14px;
-      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Notebook paper comes first -->
-  <div id="paperOutput" class="paper">
-    <div class="lines"></div>
-    <div class="left-line"></div>
-    <div class="top-line"></div>
-    <div class="date-time">
-      <div><label>Date: </label><input type="text" id="dateField" placeholder="DD/MM/YYYY"></div>
-      <div><label>Time: </label><input type="text" id="timeField" placeholder="HH:MM"></div>
-    </div>
-    <div id="textContent" class="content"></div>
-  </div>
-
-  <!-- Textarea input -->
-  <textarea id="userInput" placeholder="Type your note..."></textarea>
-
-  <!-- Controls go after the page -->
   <div class="controls">
-    <label>Font:</label>
-    <select id="fontSelect">
-      <option>Homemade Apple</option>
-      <option>Caveat</option>
-      <option>Pacifico</option>
-      <option>Shadows Into Light</option>
-      <option>Patrick Hand</option>
-      <option>Architects Daughter</option>
-      <option>Indie Flower</option>
-      <option>Satisfy</option>
-      <option>Dancing Script</option>
-      <option>Yellowtail</option>
-      <option>Gloria Hallelujah</option>
-      <option>Coming Soon</option>
-      <option>Just Me Again Down Here</option>
-      <option>Rock Salt</option>
-      <option>Reenie Beanie</option>
-      <option>Zeyada</option>
-      <option>Give You Glory</option>
-      <option>Kalam</option>
-      <option>Handlee</option>
-    </select>
-
-    <label>Size:</label>
-    <input type="number" id="fontSize" value="20" min="12" max="72">
-
-    <label>Line Height:</label>
-    <input type="number" id="lineHeight" value="26" min="16" max="60">
-
-    <label>Text Color:</label>
-    <input type="color" id="fontColorPicker" value="#222222">
-
-    <label>Line Color:</label>
-    <input type="color" id="lineColorPicker" value="#00aaff">
-
-    <button onclick="toggleStyle('bold')"><b>B</b></button>
-    <button onclick="toggleStyle('italic')"><i>I</i></button>
-    <button onclick="toggleStyle('underline')"><u>U</u></button>
-
-    <button onclick="saveAsJPEG()">📸 Save JPEG</button>
+    <button onclick="addPage()">➕ Add Page</button>
   </div>
+
+  <div id="pages" class="page-container"></div>
 
   <script>
-    const userInput = document.getElementById('userInput');
-    const textContent = document.getElementById('textContent');
-    const fontSelect = document.getElementById('fontSelect');
-    const fontColorPicker = document.getElementById('fontColorPicker');
-    const fontSizeInput = document.getElementById('fontSize');
-    const lineHeightInput = document.getElementById('lineHeight');
-    const lineColorPicker = document.getElementById('lineColorPicker');
-    const paperOutput = document.getElementById('paperOutput');
+    let pageCount = 0;
 
-    let styles = {
-      bold: false,
-      italic: false,
-      underline: false
-    };
+    function addPage() {
+      const pageId = `page-${++pageCount}`;
 
-    function updatePreview() {
-      textContent.textContent = userInput.value;
-      textContent.style.fontFamily = `'${fontSelect.value}', cursive`;
-      textContent.style.color = fontColorPicker.value;
-      textContent.style.fontWeight = styles.bold ? 'bold' : 'normal';
-      textContent.style.fontStyle = styles.italic ? 'italic' : 'normal';
-      textContent.style.textDecoration = styles.underline ? 'underline' : 'none';
-      textContent.style.fontSize = fontSizeInput.value + 'px';
-      textContent.style.lineHeight = lineHeightInput.value + 'px';
-      document.documentElement.style.setProperty('--line-color', lineColorPicker.value);
+      const wrapper = document.createElement('div');
+      wrapper.innerHTML = `
+        <div id="${pageId}" class="paper">
+          <div class="lines"></div>
+          <div class="left-line"></div>
+          <div class="top-line"></div>
+          <div class="date-time">
+            <div><label>Date: </label><input type="text" placeholder="DD/MM/YYYY"></div>
+            <div><label>Time: </label><input type="text" placeholder="HH:MM"></div>
+          </div>
+          <div class="content" contenteditable="true">Type here...</div>
+        </div>
+
+        <div class="controls" data-page="${pageId}">
+          <label>Font:
+            <select class="fontSelect">
+              <option>Homemade Apple</option>
+              <option>Caveat</option>
+              <option>Pacifico</option>
+              <option>Shadows Into Light</option>
+              <option>Patrick Hand</option>
+              <option>Architects Daughter</option>
+              <option>Indie Flower</option>
+              <option>Satisfy</option>
+              <option>Dancing Script</option>
+              <option>Yellowtail</option>
+              <option>Gloria Hallelujah</option>
+              <option>Coming Soon</option>
+              <option>Just Me Again Down Here</option>
+              <option>Rock Salt</option>
+              <option>Reenie Beanie</option>
+              <option>Zeyada</option>
+              <option>Give You Glory</option>
+              <option>Kalam</option>
+              <option>Handlee</option>
+            </select>
+          </label>
+          <label>Font Size:
+            <input type="number" class="fontSize" value="20" min="12" max="72">
+          </label>
+          <label>Line Height:
+            <input type="number" class="lineHeight" value="26" min="16" max="60">
+          </label>
+          <label>Text Color:
+            <input type="color" class="fontColorPicker" value="#222222">
+          </label>
+          <label>Line Color:
+            <input type="color" class="lineColorPicker" value="#00aaff">
+          </label>
+          <button onclick="toggleStyle('${pageId}', 'bold')"><b>B</b></button>
+          <button onclick="toggleStyle('${pageId}', 'italic')"><i>I</i></button>
+          <button onclick="toggleStyle('${pageId}', 'underline')"><u>U</u></button>
+          <button onclick="saveAsJPEG('${pageId}')">📸 Save Page</button>
+        </div>
+      `;
+
+      document.getElementById('pages').appendChild(wrapper);
+
+      const content = wrapper.querySelector('.content');
+      const fontSelect = wrapper.querySelector('.fontSelect');
+      const fontSize = wrapper.querySelector('.fontSize');
+      const lineHeight = wrapper.querySelector('.lineHeight');
+      const fontColor = wrapper.querySelector('.fontColorPicker');
+      const lineColor = wrapper.querySelector('.lineColorPicker');
+      const paper = wrapper.querySelector('.paper');
+
+      function updateStyles() {
+        content.style.fontFamily = `'${fontSelect.value}', cursive`;
+        content.style.fontSize = fontSize.value + 'px';
+        content.style.lineHeight = lineHeight.value + 'px';
+        content.style.color = fontColor.value;
+        paper.style.setProperty('--line-color', lineColor.value);
+      }
+
+      fontSelect.oninput = updateStyles;
+      fontSize.oninput = updateStyles;
+      lineHeight.oninput = updateStyles;
+      fontColor.oninput = updateStyles;
+      lineColor.oninput = updateStyles;
+      content.oninput = updateStyles;
+
+      updateStyles();
     }
 
-    function toggleStyle(style) {
-      styles[style] = !styles[style];
-      updatePreview();
+    function toggleStyle(pageId, style) {
+      const content = document.querySelector(`#${pageId} .content`);
+      content.style.fontWeight = style === 'bold' ? toggle(content.style.fontWeight, 'bold') : content.style.fontWeight;
+      content.style.fontStyle = style === 'italic' ? toggle(content.style.fontStyle, 'italic') : content.style.fontStyle;
+      content.style.textDecoration = style === 'underline' ? toggle(content.style.textDecoration, 'underline') : content.style.textDecoration;
     }
 
-    function saveAsJPEG() {
-      html2canvas(paperOutput, {
+    function toggle(current, value) {
+      return current === value ? 'normal' : value;
+    }
+
+    function saveAsJPEG(pageId) {
+      const element = document.getElementById(pageId);
+      html2canvas(element, {
         backgroundColor: '#fff',
         scale: 2
       }).then(canvas => {
         const link = document.createElement('a');
-        link.download = 'notebook-page.jpg';
-        link.href = canvas.toDataURL('image/jpeg', 1.0);
+        link.download = `${pageId}.jpg`;
+        link.href = canvas.toDataURL('image/jpeg');
         link.click();
       });
     }
 
-    userInput.addEventListener('input', updatePreview);
-    fontSelect.addEventListener('change', updatePreview);
-    fontColorPicker.addEventListener('input', updatePreview);
-    fontSizeInput.addEventListener('input', updatePreview);
-    lineHeightInput.addEventListener('input', updatePreview);
-    lineColorPicker.addEventListener('input', updatePreview);
-
-    window.onload = updatePreview;
+    // Initialize first page
+    addPage();
   </script>
+
 </body>
 </html>
